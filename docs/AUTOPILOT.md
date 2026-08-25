@@ -1,7 +1,5 @@
 # Backlog Autopilot — how it works
 
-Read this once as a team. Ten minutes, and everyone can answer any question a judge asks.
-
 ---
 
 ## 1. The one-sentence version
@@ -114,14 +112,6 @@ Call it what it is: **a self-driving backlog with a human veto.**
 The solver may only change scoring rules — a keyword list or a weight constant — plus
 append a test. It cannot touch the server, the UI, or the agents themselves.
 
-This is a design decision, not a shortcut, and it is worth defending directly:
-**an unattended agent is exactly as safe as the blast radius you give it.** We chose a
-space small enough that "the tests are green" is a real guarantee rather than a hope.
-Widening that space is a human decision.
-
-If a judge asks "so it is not really writing code?" — it is. Real branch, real diff, real
-test, real CI, real PR. What is constrained is *where* it may write, and that constraint
-is the reason you can leave it running.
 
 Swapping in an LLM is one function: replace `entry.patch` in `src/agents/catalog.ts` with
 a model call that returns a diff. Everything downstream — the worktree, the self-test
@@ -171,27 +161,3 @@ scripts/autopilot.mjs      one command that runs all of it
 ```
 
 ---
-
-## 9. Answers to the questions you will get
-
-**"Is this just a cron job?"**
-The reporter is scheduled. Triage and the solver are not — they react to whatever state
-GitHub is in. Kill the reporter and the other two still drain the backlog.
-
-**"What if the agent writes something wrong?"**
-Three gates: the bounded solution space, the agent's own test run, and CI on the PR.
-Then a human. Nothing reaches `main` without all four.
-
-**"Why not let an LLM do the ranking?"**
-Then nobody can audit the priority order. The whole product is about ranking that
-explains itself; using an unexplainable ranker for our own backlog would contradict it.
-
-**"Does it scale past your catalog?"**
-The catalog is the demo's source of realistic issues. The scoring, dispatch, worktree
-isolation, self-verification and human-veto loop are generic — they do not know or care
-where an issue came from.
-
-**"What is genuinely new versus GitHub Copilot's coding agent?"**
-Copilot answers *how do I fix this issue*. We answer *which issue should be fixed next,
-why that one, and did the fix verify itself before it reached me* — plus the one screen
-where a human says yes or no.
