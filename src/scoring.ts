@@ -27,7 +27,7 @@ export function scoreMessage(
   }
 
   if (text.includes("?")) {
-    reasons.push({ rule: "question", points: 20, detail: "contains a question" });
+    reasons.push({ rule: "question", points: 28, detail: "contains a question" });
   }
 
   const urgent = URGENT_WORDS.filter((w) => text.includes(w));
