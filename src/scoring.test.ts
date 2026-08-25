@@ -110,3 +110,10 @@ describe("autopilot: escalation keyword", () => {
     expect(result.reasons.some((r) => r.rule === "urgency")).toBe(true);
   });
 });
+
+describe("autopilot: calendar invite noise", () => {
+  it("demotes calendar invites", () => {
+    const result = scoreMessage(msg({ subject: "Invite: sprint planning" }), NOW);
+    expect(result.reasons.some((r) => r.rule === "noise")).toBe(true);
+  });
+});
