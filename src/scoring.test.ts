@@ -103,3 +103,10 @@ describe("bucketFor", () => {
     expect(bucketFor(5)).toBe("later");
   });
 });
+
+describe("autopilot: survey noise", () => {
+  it("demotes survey mail", () => {
+    const result = scoreMessage(msg({ subject: "Quick survey: how did we do?" }), NOW);
+    expect(result.reasons.some((r) => r.rule === "noise")).toBe(true);
+  });
+});
