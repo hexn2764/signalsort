@@ -52,7 +52,7 @@ export function scoreMessage(
   }
 
   if (message.channel === "feed") {
-    reasons.push({ rule: "channel", points: -10, detail: "feed item, not a direct message" });
+    reasons.push({ rule: "channel", points: -20, detail: "feed item, not a direct message" });
   }
 
   const score = clamp(reasons.reduce((sum, r) => sum + r.points, 0));
