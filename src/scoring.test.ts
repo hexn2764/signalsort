@@ -103,3 +103,10 @@ describe("bucketFor", () => {
     expect(bucketFor(5)).toBe("later");
   });
 });
+
+describe("autopilot: calendar invite noise", () => {
+  it("demotes calendar invites", () => {
+    const result = scoreMessage(msg({ subject: "Invite: sprint planning" }), NOW);
+    expect(result.reasons.some((r) => r.rule === "noise")).toBe(true);
+  });
+});
