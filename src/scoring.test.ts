@@ -103,3 +103,10 @@ describe("bucketFor", () => {
     expect(bucketFor(5)).toBe("later");
   });
 });
+
+describe("autopilot: escalation keyword", () => {
+  it("treats an escalation as urgent", () => {
+    const result = scoreMessage(msg({ subject: "Escalation from the support team" }), NOW);
+    expect(result.reasons.some((r) => r.rule === "urgency")).toBe(true);
+  });
+});
