@@ -110,3 +110,11 @@ describe("autopilot: escalation keyword", () => {
     expect(result.reasons.some((r) => r.rule === "urgency")).toBe(true);
   });
 });
+
+describe("autopilot: feed penalty", () => {
+  it("keeps a direct question above a feed post", () => {
+    const direct = scoreMessage(msg({ id: "d", directlyAddressed: true, subject: "can you check?" }), NOW);
+    const feed = scoreMessage(msg({ id: "f", channel: "feed", subject: "look at this" }), NOW);
+    expect(direct.score).toBeGreaterThan(feed.score);
+  });
+});
