@@ -110,3 +110,10 @@ describe("autopilot: escalation keyword", () => {
     expect(result.reasons.some((r) => r.rule === "urgency")).toBe(true);
   });
 });
+
+describe("autopilot: sale noise", () => {
+  it("demotes marketing sale mail", () => {
+    const result = scoreMessage(msg({ subject: "Summer sale ends tonight" }), NOW);
+    expect(result.reasons.some((r) => r.rule === "noise")).toBe(true);
+  });
+});
