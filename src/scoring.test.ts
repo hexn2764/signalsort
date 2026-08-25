@@ -110,3 +110,11 @@ describe("autopilot: escalation keyword", () => {
     expect(result.reasons.some((r) => r.rule === "urgency")).toBe(true);
   });
 });
+
+describe("autopilot: freshness window", () => {
+  it("still credits a three-hour-old message", () => {
+    const recent = new Date(NOW.getTime() - 3 * 3_600_000).toISOString();
+    const result = scoreMessage(msg({ receivedAt: recent }), NOW);
+    expect(result.reasons.some((r) => r.rule === "fresh")).toBe(true);
+  });
+});
