@@ -1,15 +1,29 @@
 import type { Message, ScoreReason, ScoredMessage } from "./types.js";
 
+type MessageWithReply = Message & { isReplyToMe?: boolean };
+
 const URGENT_WORDS = ["asap", "urgent", "today", "deadline", "blocker", "outage", "eod"];
 const NOISE_WORDS = ["newsletter", "unsubscribe", "webinar", "promo", "no-reply"];
 
 /** Pure. `now` is injected so tests are deterministic. */
-export function scoreMessage(message: Message, now: Date): ScoredMessage {
+export function scoreMessage(
+  message: MessageWithReply,
+  now: Date,
+  vipSenders: string[] = [],
+): ScoredMessage {
   const reasons: ScoreReason[] = [];
   const text = `${message.subject} ${message.body}`.toLowerCase();
 
   if (message.directlyAddressed) {
     reasons.push({ rule: "addressed", points: 30, detail: "you are addressed directly" });
+  }
+
+  if (vipSenders.some((sender) => sender.toLowerCase() === message.from.toLowerCase())) {
+    reasons.push({ rule: "senderWeight", points: 25, detail: "from a VIP sender" });
+  }
+
+  if (message.isReplyToMe) {
+    reasons.push({ rule: "threadReply", points: 15, detail: "reply in a thread you started" });
   }
 
   if (text.includes("?")) {
@@ -52,9 +66,9 @@ export function scoreMessage(message: Message, now: Date): ScoredMessage {
   };
 }
 
-export function triage(messages: Message[], now: Date): ScoredMessage[] {
+export function triage(messages: MessageWithReply[], now: Date, vipSenders: string[] = []): ScoredMessage[] {
   return messages
-    .map((m) => scoreMessage(m, now))
+    .map((m) => scoreMessage(m, now, vipSenders))
     .sort((a, b) => b.score - a.score || a.message.id.localeCompare(b.message.id));
 }
 
