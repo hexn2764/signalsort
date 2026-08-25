@@ -110,3 +110,11 @@ describe("autopilot: escalation keyword", () => {
     expect(result.reasons.some((r) => r.rule === "urgency")).toBe(true);
   });
 });
+
+describe("autopilot: stale window", () => {
+  it("marks a 30-hour-old message as stale", () => {
+    const old = new Date(NOW.getTime() - 30 * 3_600_000).toISOString();
+    const result = scoreMessage(msg({ receivedAt: old }), NOW);
+    expect(result.reasons.some((r) => r.rule === "stale")).toBe(true);
+  });
+});
