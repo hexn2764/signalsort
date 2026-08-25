@@ -40,6 +40,7 @@ solver   ──▶ own git worktree ──▶ patch + test ──▶ npm test
 
 ## Docs
 
+- [RUNBOOK.md](RUNBOOK.md) — stop it, clean the repo, start it again
 - [docs/AUTOPILOT.md](docs/AUTOPILOT.md) — how it works, and the answers to the
   questions you will be asked
 - [docs/PITCH.md](docs/PITCH.md) — the 3-minute pitch script
