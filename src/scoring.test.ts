@@ -110,3 +110,10 @@ describe("autopilot: escalation keyword", () => {
     expect(result.reasons.some((r) => r.rule === "urgency")).toBe(true);
   });
 });
+
+describe("autopilot: survey noise", () => {
+  it("demotes survey mail", () => {
+    const result = scoreMessage(msg({ subject: "Quick survey: how did we do?" }), NOW);
+    expect(result.reasons.some((r) => r.rule === "noise")).toBe(true);
+  });
+});
