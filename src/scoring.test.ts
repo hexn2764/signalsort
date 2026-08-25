@@ -110,3 +110,10 @@ describe("autopilot: escalation keyword", () => {
     expect(result.reasons.some((r) => r.rule === "urgency")).toBe(true);
   });
 });
+
+describe("autopilot: question weight", () => {
+  it("scores a plain question into at least the Today bucket", () => {
+    const result = scoreMessage(msg({ subject: "Could you take a look?" }), NOW);
+    expect(result.score).toBeGreaterThanOrEqual(28);
+  });
+});
