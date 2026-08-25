@@ -3,7 +3,7 @@ import type { Message, ScoreReason, ScoredMessage } from "./types.js";
 type MessageWithReply = Message & { isReplyToMe?: boolean };
 
 const URGENT_WORDS = ["asap", "urgent", "today", "deadline", "blocker", "outage", "eod"];
-const NOISE_WORDS = ["newsletter", "unsubscribe", "webinar", "promo", "no-reply"];
+const NOISE_WORDS = ["sale", "newsletter", "unsubscribe", "webinar", "promo", "no-reply"];
 
 /** Pure. `now` is injected so tests are deterministic. */
 export function scoreMessage(
