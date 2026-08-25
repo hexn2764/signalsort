@@ -110,3 +110,10 @@ describe("autopilot: escalation keyword", () => {
     expect(result.reasons.some((r) => r.rule === "urgency")).toBe(true);
   });
 });
+
+describe("autopilot: sev1 keyword", () => {
+  it("treats a sev1 page as urgent", () => {
+    const result = scoreMessage(msg({ subject: "sev1 page: checkout latency" }), NOW);
+    expect(result.reasons.some((r) => r.rule === "urgency")).toBe(true);
+  });
+});
