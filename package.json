@@ -13,7 +13,9 @@
     "agent:triage": "tsx src/agents/triage.ts",
     "agent:solver": "tsx src/agents/solver.ts",
     "autopilot": "node scripts/autopilot.mjs",
-    "autopilot:fast": "REPORT_MIN_MS=45000 REPORT_MAX_MS=90000 TRIAGE_INTERVAL_MS=20000 SOLVE_INTERVAL_MS=20000 node scripts/autopilot.mjs"
+    "autopilot:fast": "REPORT_MIN_MS=45000 REPORT_MAX_MS=90000 TRIAGE_INTERVAL_MS=20000 SOLVE_INTERVAL_MS=20000 node scripts/autopilot.mjs",
+    "stop": "bash scripts/stop.sh",
+    "reset": "bash scripts/reset.sh"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
