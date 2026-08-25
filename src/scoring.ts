@@ -47,7 +47,7 @@ export function scoreMessage(
   const ageHours = (now.getTime() - new Date(message.receivedAt).getTime()) / 3_600_000;
   if (ageHours <= 2) {
     reasons.push({ rule: "fresh", points: 10, detail: "arrived in the last 2 hours" });
-  } else if (ageHours > 48) {
+  } else if (ageHours > 24) {
     reasons.push({ rule: "stale", points: -10, detail: "older than 2 days" });
   }
 
