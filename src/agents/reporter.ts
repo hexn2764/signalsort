@@ -13,26 +13,47 @@ import { emit } from "./events.js";
 const MIN_MS = Number(process.env.REPORT_MIN_MS ?? 60_000); // 1 minute
 const MAX_MS = Number(process.env.REPORT_MAX_MS ?? 300_000); // 5 minutes
 
+/**
+ * Back-pressure: never let more than this many autopilot issues sit open at once.
+ * The reporter stands in for reality, but reality that spams a repository is a worse
+ * demo, not a better one. As the solver drains the backlog and a human accepts pull
+ * requests, room frees up and the reporter files again — so this cap regulates the
+ * whole loop, not just agent 1.
+ */
+const MAX_OPEN = Number(process.env.MAX_OPEN_ISSUES ?? 5);
+
 function nextDelay(): number {
   return MIN_MS + Math.floor(Math.random() * Math.max(0, MAX_MS - MIN_MS));
 }
 
-async function usedIds(): Promise<Set<string>> {
+type Backlog = { used: Set<string>; openAutopilot: number };
+
+async function readBacklog(): Promise<Backlog> {
   const [issues, pulls] = await Promise.all([listIssues(100), listPulls(100)]);
-  const ids = new Set<string>();
+  const used = new Set<string>();
+  let openAutopilot = 0;
+
   for (const i of issues) {
     const id = readId(i.body ?? "");
-    if (id) ids.add(id);
+    if (id) used.add(id);
+    if (i.labels.some((l) => l.name === "autopilot")) openAutopilot += 1;
   }
   for (const p of pulls) {
     const id = readId(p.body ?? "");
-    if (id) ids.add(id);
+    if (id) used.add(id);
   }
-  return ids;
+
+  return { used, openAutopilot };
 }
 
 async function fileOne(): Promise<void> {
-  const used = await usedIds();
+  const { used, openAutopilot } = await readBacklog();
+
+  if (openAutopilot >= MAX_OPEN) {
+    emit("reporter", "capped", `${openAutopilot}/${MAX_OPEN} autopilot issues already open — holding`);
+    return;
+  }
+
   const candidates = CATALOG.filter((e) => !used.has(e.id));
 
   if (candidates.length === 0) {
@@ -51,7 +72,7 @@ async function main(): Promise<void> {
   await ensureLabel("bug", "D73A4A", "Something is not working");
   await ensureLabel("enhancement", "0E8A16", "New capability or improvement");
 
-  emit("reporter", "start", `filing one issue every ${MIN_MS / 1000}–${MAX_MS / 1000}s`);
+  emit("reporter", "start", `one issue every ${MIN_MS / 1000}–${MAX_MS / 1000}s, max ${MAX_OPEN} open at a time`);
   await fileOne();
 
   for (;;) {
